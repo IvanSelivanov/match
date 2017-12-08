@@ -377,9 +377,11 @@ function match($c1, $c2)
     $average = $d->getAverageScore();
     $score1 = round($team1->getAttackScore()+$team2->getSkipScore()-$average);
     $score2 = round($team2->getAttackScore()+$team1->getSkipScore()-$average);
-    $p1 = new Poisson($score1);
-    $p2 = new Poisson($score2);
-    return [(int)$p1->random()->getValue(), (int)$p2->random()->getValue()];
+    $p1 = new Poisson($score1+1); // двигаем распределение вправо
+    $p2 = new Poisson($score2+1);
+    $s1 = max((int)$p1->random()->getValue()-1, 0); // ... и обратно, отрезая отрицательную часть
+    $s2 = max((int)$p2->random()->getValue()-1, 0);
+    return [$s1, $s2];
 }
 
 //var_dump(match(1,31));
